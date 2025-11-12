@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class ArchivoTxtService {
 
-    public static boolean asignaturaDisponible(String codigoAsignatura, String semestre) throws FileNotFoundException, IOException {
+    public static boolean asignaturaDisponible(String codigoAsignatura, String semestre)  {
 
 
         try (BufferedReader br = new BufferedReader(new FileReader("asignaturas.txt"))){
@@ -30,6 +30,13 @@ public class ArchivoTxtService {
 
             }
             
+        } catch (FileNotFoundException e) {
+            // TODO: handle exception
+            return false;
+
+        }catch (IOException e2) {
+            // TODO: handle exception
+            return false;
         }
 
         return false;

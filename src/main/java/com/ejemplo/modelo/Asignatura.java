@@ -4,15 +4,13 @@ public class Asignatura {
 
     private String codigo;
     private String nombre;
-    private boolean semestre1;
-    private boolean semestre2;
+    private Semestres semestre;
     private int creditos;
     
     public Asignatura(String codigo, String nombre, boolean semestre1, boolean semestre2, int creditos) {
         this.codigo = codigo;
         this.nombre = nombre;
-        this.semestre1 = semestre1;
-        this.semestre2 = semestre2;
+        setSmestre(semestre1, semestre2);
         this.creditos = creditos;
     }
 
@@ -24,13 +22,9 @@ public class Asignatura {
         return nombre;
     }
 
-    public boolean isSemestre1() {
-        return semestre1;
-    }
-
-    public boolean isSemestre2() {
-        return semestre2;
-    }
+   public Semestres getSemestre() {
+       return semestre;
+   }
 
     public int getCreditos() {
         return creditos;
@@ -44,13 +38,14 @@ public class Asignatura {
         this.nombre = nombre;
     }
 
-    public void setSemestre1(boolean semestre1) {
-        this.semestre1 = semestre1;
+    public void setSmestre(boolean semestre1, boolean semestre2) {
+
+        if (semestre1) this.semestre = Semestres.PRIMERO;
+
+        else this.semestre = Semestres.SEGUNDO;
     }
 
-    public void setSemestre2(boolean semestre2) {
-        this.semestre2 = semestre2;
-    }
+    
 
     public void setCreditos(int creditos) {
         this.creditos = creditos;
@@ -58,8 +53,8 @@ public class Asignatura {
 
     @Override
     public String toString() {
-        return "Asignatura [codigo=" + codigo + ", nombre=" + nombre + ", semestre1=" + semestre1 + ", semestre2="
-                + semestre2 + ", creditos=" + creditos + "]";
+        return "Asignatura [codigo=" + codigo + ", nombre=" + nombre +  ", semestre="
+                + semestre + ", creditos=" + creditos + "]";
     }
 
     

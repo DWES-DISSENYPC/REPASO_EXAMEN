@@ -20,13 +20,11 @@ public class MatriculaBBDD {
 
 
 
-    public  static boolean existeEstudiante(String dni) throws SQLException {
+    public  static boolean existeEstudiante(String dni)  {
 
-        try (Connection con = crearConexion("ruta_base_datos_alumnos", "root", "")) {
+        String sql = "SELECT dni FROM alumnos where dni = ?";
 
-            String sql = "SELECT dni FROM alumnos where dni = ?";
-
-            PreparedStatement ps = con.prepareStatement(sql);
+        try (Connection con = crearConexion("ruta_base_datos_alumnos", "root", ""); PreparedStatement ps = con.prepareStatement(sql);) {
 
             ps.setString(1, dni);
 
@@ -35,18 +33,19 @@ public class MatriculaBBDD {
             if (rs.next()) return true;
 
             
+        } catch (SQLException e) {
+
+            return false;
         }
 
         return false;
     }
 
-    public static boolean asignaturaDisponible(String codigoAsignatura, String semestre) throws SQLException{
+    public static boolean asignaturaDisponible(String codigoAsignatura, String semestre) {
 
-        try (Connection con = crearConexion("ruta_base_datos_asignaturas", "root", "")) {
+        String sql = "SELECT codigo, semestre1, semestre2  FROM asignaturas where semestre = ?";
 
-            String sql = "SELECT codigo, semestre1, semestre2  FROM asignaturas where semestre = ?";
-
-            PreparedStatement ps = con.prepareStatement(sql);
+        try (Connection con = crearConexion("ruta_base_datos_asignaturas", "root", ""); PreparedStatement ps = con.prepareStatement(sql);) {
 
             ps.setString(1, semestre);
 
@@ -56,6 +55,9 @@ public class MatriculaBBDD {
 
 
             
+        } catch (SQLException e) {
+
+            return false;
         }
 
 
@@ -63,23 +65,25 @@ public class MatriculaBBDD {
 
     }
 
-    public static boolean insertarMatricula(String dni, String codigoAsignatura, String semestre) throws SQLException{
+    public static boolean insertarMatricula(String dni, String codigoAsignatura, boolean semestre1, boolean semestre2) {
 
-        try (Connection con = crearConexion("ruta_base_datos_matriculas", "root", "")) {
+        String sql = "INSERT INTO MATRICULAS (dni, codigoAsignatura, semestre1, semestre2) VALUES (?,?,?,?)";
 
-            String sql = "INSERT INTO MATRICULAS (dni, codigoAsignatura, semestre) VALUES (?,?,?)";
-
-            PreparedStatement ps = con.prepareStatement(sql);
+        try (Connection con = crearConexion("ruta_base_datos_matriculas", "root", ""); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, dni);
             ps.setString(2, codigoAsignatura);
-            ps.setString(3, semestre);
+            ps.setBoolean(3, semestre1);
+            ps.setBoolean(4, semestre2);
 
             int filas =ps.executeUpdate();
 
             if (filas > 0) return true;           
 
             
+        } catch (SQLException e){
+
+            return false;
         }
 
         return false;
