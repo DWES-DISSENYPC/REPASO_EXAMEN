@@ -1,27 +1,16 @@
 package com.ejemplo.services;
 
-import java.io.*;
-import java.nio.file.*;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.ejemplo.modelo.Semestres;
-import com.google.gson.Gson;
-
-import jakarta.servlet.*;
+import com.ejemplo.modelo.*;
 import jakarta.servlet.http.*;
 
 public class GestionMatriculaService {
 
-   
-
     /** Procesa el registro */
-    public static boolean registrarMatricula(HttpServletRequest req)  {
+    public static Respuestas registrarMatricula(HttpServletRequest req)  {
 
             System.err.println("=== ENTRANDO A procesarFichero ===");
+
+            Respuestas ok = new Respuestas(true);
 
             String dni = req.getParameter("dni");
             String email = req.getParameter("email");
@@ -30,55 +19,66 @@ public class GestionMatriculaService {
 
             if (!MatriculaBBDD.existeEstudiante(dni)) {
                 System.err.println("Usuario no autorizado.");
-                return false;
+                ok.setOk( false );
+                return ok;
             }
 
             if (!MatriculaBBDD.asignaturaDisponible(codAsig, semestre)){
 
                 System.err.println("La asignatura no está disponible");
-                return false;
+                ok.setOk( false );
+                return ok;
             }
 
             if (!ArchivoTxtService.asignaturaDisponible(codAsig, semestre)){
 
                 System.err.println("La asignatura no está disponible");
-                return false;
+                ok.setOk( false );
+                return ok;
             }
 
-            boolean semestre1 = false;
-            boolean semestre2 = false;
+            Semestres s = Semestres.PRIMERO;
 
             switch (semestre) {
                 case "PRIMERO":
 
-                    semestre1 = true;
-                    
+                   s = Semestres.PRIMERO; 
                     break;
 
                 case "SEGUNDO":
 
-                    semestre2 = true;
-                break;
+                   s = Semestres.SEGUNDO; 
+                    break;
             
                 default:
                     break;
             }
-            if (!MatriculaBBDD.insertarMatricula(dni, codAsig, semestre1, semestre2)) {
+            
+
+            if (!MatriculaBBDD.insertarMatricula(dni, codAsig, s)) {
 
                 System.err.println("Error al introducir los datos en la base de datos");
-                return false;
+                ok.setOk( false );
+                return ok;
 
             }
 
             JsonService js = new JsonService();
 
-            String json = js.crearJson(dni, codAsig, semestre1, semestre2);
+            String json = js.crearJson(dni, codAsig, semestre);
 
-            if(json != null) return false;
+            if(json != null) {
+                
+                ok.setOk( false );
+                return ok;
 
-            
 
-            return true;            
+            }
+
+            ok.setMatricula(json);
+            ok.setOk(true);
+
+            return ok;            
 
     }
 }

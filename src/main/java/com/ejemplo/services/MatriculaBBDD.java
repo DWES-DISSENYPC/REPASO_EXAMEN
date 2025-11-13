@@ -1,6 +1,9 @@
 package com.ejemplo.services;
 
 import java.sql.*;
+import java.time.LocalDate;
+
+import com.ejemplo.modelo.Semestres;
 
 public class MatriculaBBDD {
 
@@ -65,16 +68,19 @@ public class MatriculaBBDD {
 
     }
 
-    public static boolean insertarMatricula(String dni, String codigoAsignatura, boolean semestre1, boolean semestre2) {
+    public static boolean insertarMatricula(String dni, String codigoAsignatura, Semestres semestre) {
 
-        String sql = "INSERT INTO MATRICULAS (dni, codigoAsignatura, semestre1, semestre2) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO MATRICULAS (dni, codigoAsignatura, semestre, fechaRegstro) VALUES (?,?,?,?)";
+
+        LocalDate hoy = LocalDate.now();
+        Date sqlDate = Date.valueOf(hoy);
 
         try (Connection con = crearConexion("ruta_base_datos_matriculas", "root", ""); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, dni);
             ps.setString(2, codigoAsignatura);
-            ps.setBoolean(3, semestre1);
-            ps.setBoolean(4, semestre2);
+            ps.setString(3, semestre.toString());
+            ps.setDate(4, sqlDate);
 
             int filas =ps.executeUpdate();
 
